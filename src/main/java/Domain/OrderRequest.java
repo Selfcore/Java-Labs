@@ -12,4 +12,8 @@ public class OrderRequest {
     private int quantity;
     private CargoType cargoType;
     private int weight;
+    private int neededExperience;
+
+    private boolean isAssigned;
+    private boolean isCompleted;
 }
