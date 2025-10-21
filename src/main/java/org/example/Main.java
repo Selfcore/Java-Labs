@@ -46,6 +46,23 @@ public class Main {
           );
         """;
 
+    private static final String getWorkScheduleTodayTomorrow = """
+            SELECT
+                    WS.id,
+                    W.fullname,
+                    D.day,
+                    WS."startTime",
+                    WS."endTime"
+                FROM public."WorkSchedule" WS
+                JOIN public."ViewWorkers" W ON WS."workerId" = W.id
+                JOIN public."Days" D ON WS."dayId" = D.id
+                WHERE D.day IN (
+                    TO_CHAR(CURRENT_DATE, 'Day'),
+                    TO_CHAR(CURRENT_DATE + INTERVAL '1 day', 'Day')
+                )
+                ORDER BY D.id, WS."startTime";
+    """;
+
     public static void main(String[] args) throws SQLException {
         System.out.println("Hello World!");
 
@@ -81,10 +98,10 @@ public class Main {
 
             while (resultSet.next()) {
                 int id = resultSet.getInt("id");
-                String name = resultSet.getString("fullname");
+                String name = resultSet.getString("fullname").trim();
                 String position = resultSet.getString("title");
 
-                System.out.println(String.format("%d %s %s", id, name, position));
+                System.out.println(String.format("%d | %s | %s", id, name, position));
             }
 
             PreparedStatement preparedStatement = connection.prepareStatement(averageOrderSumByDate);
@@ -121,6 +138,21 @@ public class Main {
 
                 System.out.printf("ID: %d | Дата: %s | Клієнт: %s | Сума: %.2f%n",
                         id, orderDate, fullname, total);
+            }
+
+            System.out.println("\t\t\t\t ---Розклад роботи на сьогодні та завтра--- \t\t\t\t");
+
+            ResultSet scheduleSet = statement.executeQuery(getWorkScheduleTodayTomorrow);
+
+            while (scheduleSet.next()) {
+                int id = scheduleSet.getInt("id");
+                String fullname = scheduleSet.getString("fullname").trim();
+                String dayName = scheduleSet.getString("day").trim();
+                String start = scheduleSet.getTime("startTime").toString();
+                String end = scheduleSet.getTime("endTime").toString();
+
+                System.out.printf("ID: %d | Працівник: %s | День: %s | Початок: %s | Кінець: %s%n",
+                        id, fullname, dayName, start, end);
             }
         } catch (SQLException e) {
             throw new RuntimeException(e);
