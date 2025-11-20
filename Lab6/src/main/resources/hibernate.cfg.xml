@@ -1,0 +1,18 @@
+<hibernate-configuration>
+    <session-factory>
+        <property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+        <property name="hibernate.connection.url">jdbc:postgresql://localhost:15432/Sales</property>
+        <property name="hibernate.connection.username">selfcore</property>
+        <property name="hibernate.connection.password">secretpassword</property>
+
+        <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+        <property name="hibernate.hbm2ddl.auto">update</property>
+        <property name="hibernate.show_sql">true</property>
+
+        <mapping class="Models.Client"/>
+        <mapping class="Models.Worker"/>
+        <mapping class="Models.Order"/>
+        <mapping class="Models.Product"/>
+        <mapping class="Models.OrderLine"/>
+    </session-factory>
+</hibernate-configuration>
