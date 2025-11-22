@@ -5,6 +5,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "orderlines")
 public class OrderLine {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
