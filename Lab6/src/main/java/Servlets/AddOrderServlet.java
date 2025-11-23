@@ -7,6 +7,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -49,7 +50,7 @@ public class AddOrderServlet extends HttpServlet {
         Order order = new Order();
         order.setClient(client);
         order.setWorker(worker);
-        order.setDate(new Date());
+        order.setDate(LocalDate.now());
 
         List<Product> products = productRepository.getAll();
         for (Product p : products) {

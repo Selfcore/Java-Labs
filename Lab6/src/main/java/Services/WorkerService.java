@@ -23,7 +23,7 @@ public class WorkerService {
 
         return worker.getOrders()
                 .stream()
-                .sorted(Comparator.comparing(Order::getDate).reversed())
+                .sorted(Comparator.comparing(Order::getId).reversed())
                 .limit(limit)
                 .toList();
     }

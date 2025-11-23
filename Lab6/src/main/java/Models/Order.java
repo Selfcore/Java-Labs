@@ -3,6 +3,7 @@ package Models;
 import jakarta.persistence.*;
 import lombok.Data;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +24,7 @@ public class Order {
     @JoinColumn(name = "worker_id")
     private Worker worker;
 
-    private Date date;
+    private LocalDate date;
 
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<OrderLine> orderLines = new ArrayList<>();
