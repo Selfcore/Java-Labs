@@ -1,5 +1,6 @@
 package Persistence.Repositories;
 
+import Models.Order;
 import Models.Worker;
 import Persistence.HibernateUtil;
 import org.hibernate.Session;
@@ -18,7 +19,14 @@ public class WorkerRepository implements RepositoryImp<Worker> {
     @Override
     public Worker getById(int id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            return session.find(Worker.class, id);
+            return session.createQuery(
+                            "SELECT DISTINCT W FROM Worker W " +
+                                    "LEFT JOIN FETCH W.orders " +
+                                    "WHERE W.id = :id",
+                            Worker.class
+                    )
+                    .setParameter("id", id)
+                    .uniqueResult();
         }
     }
 

@@ -17,8 +17,8 @@
 } else {
 %>
 <p><strong>Order ID:</strong> <%= order.getId() %></p>
-<p><strong>Client:</strong> <%= order.getClient() != null ? order.getClient().getName() : "(empty)" %></p>
-<p><strong>Worker:</strong> <%= order.getWorker() != null ? order.getWorker().getName() : "(empty)" %></p>
+<p><strong>Client:</strong> <%= order.getClient() != null ? order.getClient().getName() : "(empty)" %></p>| <a href="clients?id=<%= order.getClient().getId() %>">View</a>
+<p><strong>Worker:</strong> <%= order.getWorker() != null ? order.getWorker().getName() : "(empty)" %></p> | <a href="workers?id=<%= order.getWorker().getId() %>">View</a>
 <p><strong>Date:</strong> <%= order.getDate() %></p>
 
 <h2>Order Lines</h2>

@@ -1,4 +1,4 @@
-package org.example.lab6;
+package Servlets;
 
 import Models.Client;
 import Models.Worker;

@@ -1,4 +1,4 @@
-package org.example.lab6;
+package Servlets;
 
 import Models.Worker;
 import Persistence.Repositories.RepositoryImp;
