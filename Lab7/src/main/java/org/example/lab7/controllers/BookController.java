@@ -32,6 +32,12 @@ public class BookController {
         return bookService.create(book);
     }
 
+    @PostMapping("/edit/{id}")
+    public String updateBook(@PathVariable Long id, @ModelAttribute Book book) {
+        bookService.update(id, book);
+        return "redirect:/";
+    }
+
     @DeleteMapping("/{id}")
     public boolean deleteBookById(@PathVariable Long id) {
         return bookService.delete(id);
