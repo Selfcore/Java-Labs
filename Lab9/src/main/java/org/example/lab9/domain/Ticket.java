@@ -20,7 +20,7 @@ public class Ticket {
     private Status status = Status.FREE;
 
     @ManyToOne
-    private Customer customer;
+    private User customer;
 
     @ManyToOne
     private Event event;
