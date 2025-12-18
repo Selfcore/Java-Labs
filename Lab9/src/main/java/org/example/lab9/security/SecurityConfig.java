@@ -22,24 +22,6 @@ import org.springframework.web.cors.CorsConfiguration;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private final CustomUserDetailsService userDetailsService;
-    private JwtAuthenticationFilter tokenFilter;
-
-    @Autowired
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
-        this.userDetailsService = userDetailsService;
-    }
-
-    @Autowired
-    public void setTokenFilter(JwtAuthenticationFilter tokenFilter) {
-        this.tokenFilter = tokenFilter;
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
-    }
-
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -49,30 +31,34 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(
-                        httpSecurityCorsConfigurer ->
-                                httpSecurityCorsConfigurer.configurationSource(request ->
-                                        new CorsConfiguration().applyPermitDefaultValues())
+                .sessionManagement(session ->
+                        session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 )
-                .exceptionHandling(exceptions -> exceptions
-                        .authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/", "/login", "/auth/login", "/auth/register", "/css/**").permitAll()
-                        .requestMatchers("/events/**", "/tickets/free/**").hasAnyRole("USER", "MANAGER", "ADMIN")
-                        .requestMatchers("/tickets/buy/**").hasAnyRole("USER", "MANAGER", "ADMIN")
+                        .requestMatchers(
+                                "/login",
+                                "/register",
+                                "/css/**",
+                                "/js/**"
+                        ).permitAll()
+                        .requestMatchers("/events/**").hasAnyRole("USER", "MANAGER", "ADMIN")
                         .requestMatchers("/manage/**").hasAnyRole("MANAGER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )
-                .formLogin(login -> login
+                .formLogin(form -> form
                         .loginPage("/login")
+                        .loginProcessingUrl("/login")
                         .defaultSuccessUrl("/events", true)
+                        .failureUrl("/login?error")
                         .permitAll()
                 )
-                .addFilterBefore(tokenFilter, UsernamePasswordAuthenticationFilter.class)
-                .logout(logout -> logout.permitAll());
+                .logout(logout -> logout
+                        .logoutUrl("/logout")
+                        .logoutSuccessUrl("/login?logout")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                );
 
         return http.build();
     }

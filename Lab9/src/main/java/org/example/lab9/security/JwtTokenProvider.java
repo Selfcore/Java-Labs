@@ -28,14 +28,14 @@ public class JwtTokenProvider {
                 .collect(Collectors.toList());
 
         Date now = new Date();
-        Date expiration = new Date(now.getTime() + validityInMilliseconds);
+        Date expiryDate = new Date(now.getTime() + validityInMilliseconds);
 
         return Jwts.builder()
                 .setSubject(userDetails.getUsername())
                 .claim("roles", roles)
                 .setIssuedAt(now)
-                .setExpiration(expiration)
-                .signWith(SignatureAlgorithm.HS256, key)
+                .setExpiration(expiryDate)
+                .signWith(Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)), SignatureAlgorithm.HS256)
                 .compact();
     }
 
@@ -44,7 +44,7 @@ public class JwtTokenProvider {
             Jwts.parser()
                     .setSigningKey(Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)))
                     .build()
-                    .parseSignedClaims(token);
+                    .parseClaimsJws(token);
             return true;
         } catch (Exception e) {
             return false;
@@ -55,8 +55,8 @@ public class JwtTokenProvider {
         Claims claims = Jwts.parser()
                 .setSigningKey(Keys.hmacShaKeyFor(key.getBytes(StandardCharsets.UTF_8)))
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseClaimsJws(token)
+                .getBody();
 
         return claims.getSubject();
     }

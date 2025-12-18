@@ -1,5 +1,6 @@
 package org.example.lab9.controllers;
 
+import jakarta.servlet.http.Cookie;
 import org.example.lab9.controllers.dto.LoginRequest;
 import org.example.lab9.controllers.dto.RegisterRequest;
 import org.example.lab9.domain.Role;
@@ -21,35 +22,17 @@ import java.util.Set;
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-    private final AuthenticationManager authenticationManager;
-    private final JwtTokenProvider jwtTokenProvider;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
 
-    public AuthController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider,
-                          UserRepository userRepository, PasswordEncoder passwordEncoder,
+    public AuthController(UserRepository userRepository,
+                          PasswordEncoder passwordEncoder,
                           RoleRepository roleRepository) {
-        this.authenticationManager = authenticationManager;
-        this.jwtTokenProvider = jwtTokenProvider;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.roleRepository = roleRepository;
     }
-
-    @PostMapping("/login")
-    public String login(@RequestBody LoginRequest request) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.username(),
-                        request.password()
-                )
-        );
-
-        String token = jwtTokenProvider.generateToken(authentication);
-        return token;
-    }
-
 
     @PostMapping("/register")
     public void register(@RequestBody RegisterRequest request) {
