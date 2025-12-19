@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head>
+    <title>Events</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .container {
+            width: 80%;
+            margin: 40px auto;
+        }
+
+        .event-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .event-title {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        .event-meta {
+            color: #636e72;
+            margin-top: 5px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th, td {
+            padding: 10px;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        .status-free {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-sold {
+            color: #d63031;
+            font-weight: bold;
+        }
+
+        .btn {
+            padding: 6px 12px;
+            background: #0984e3;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #0866b3;
+        }
+
+        .btn-disabled {
+            background: #b2bec3;
+            cursor: not-allowed;
+        }
+
+        .top-actions {
+            margin-bottom: 20px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="top-actions">
+        <a href="/my/tickets" class="btn">My tickets</a>
+
+        <div style="float:right;">
+            <a sec:authorize="hasRole('ADMIN')"
+               href="/admin/places/new"
+               class="btn"
+               style="margin-right:10px;">
+                + Add place
+            </a>
+
+            <a sec:authorize="hasRole('ADMIN')"
+               href="/admin/events/new"
+               class="btn">
+                + Create event
+            </a>
+        </div>
+    </div>
+
+
+    <div th:each="e : ${events}" class="event-card">
+
+        <div class="event-header">
+            <div>
+                <div class="event-title" th:text="${e.name}"></div>
+                <div class="event-meta">
+                    <span th:text="${e.eventDate}"></span> |
+                    <span th:text="${e.place.name}"></span>
+                </div>
+            </div>
+        </div>
+
+        <table>
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>Price</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr th:each="t : ${e.tickets}">
+                <td th:text="${t.number}"></td>
+                <td th:text="${t.cost} + ' $'"></td>
+
+                <td>
+                    <span th:text="${t.status}"
+                          th:classappend="${t.status.name() == 'FREE'}
+                          ? 'status-free' : 'status-sold'">
+                    </span>
+                </td>
+
+                <td>
+                    <form th:if="${t.status.name() == 'FREE'}"
+                          th:action="@{/events/buy/{id}(id=${t.id})}"
+                          method="post">
+                        <button class="btn" type="submit">Buy</button>
+                    </form>
+
+                    <button th:if="${t.status.name() == 'SOLD'}"
+                            class="btn btn-disabled" disabled>
+                        Sold
+                    </button>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+</body>
+</html>

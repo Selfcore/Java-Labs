@@ -49,7 +49,7 @@ public class SecurityConfig {
                 .formLogin(form -> form
                         .loginPage("/login")
                         .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/events", true)
+                        .defaultSuccessUrl("/my/tickets", true)
                         .failureUrl("/login?error")
                         .permitAll()
                 )

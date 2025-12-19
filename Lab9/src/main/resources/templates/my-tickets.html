@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Tickets</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f5f6fa;
+        }
+
+        .container {
+            width: 80%;
+            margin: 40px auto;
+            background: white;
+            padding: 25px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        .empty {
+            padding: 20px;
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #f0f0f0;
+        }
+
+        .status-free {
+            color: green;
+            font-weight: bold;
+        }
+
+        .status-sold {
+            color: #d63031;
+            font-weight: bold;
+        }
+
+        .actions {
+            margin-top: 20px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            background: #0984e3;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+
+        .btn:hover {
+            background: #0866b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h2>Your Tickets</h2>
+    <p th:text="'User: ' + ${username}" ></p>
+
+    <div class="empty" th:if="${#lists.isEmpty(tickets)}">
+        You don't have any tickets yet.<br>
+        Go to events page and buy one!
+    </div>
+
+    <table th:if="${!#lists.isEmpty(tickets)}">
+        <thead>
+        <tr>
+            <th>Event</th>
+            <th>Date</th>
+            <th>Place</th>
+            <th>Ticket #</th>
+            <th>Price</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${tickets}">
+            <td th:text="${t.event.name}"></td>
+            <td th:text="${t.event.eventDate}"></td>
+            <td th:text="${t.event.place.name}"></td>
+            <td th:text="${t.number}"></td>
+            <td th:text="${t.cost} + ' $'"></td>
+            <td>
+                <span th:text="${t.status}"
+                      th:classappend="${t.status.name() == 'FREE'} ? 'status-free' : 'status-sold'">
+                </span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="actions">
+        <a th:href="@{/events}" class="btn">Browse events</a>
+    </div>
+
+</div>
+
+</body>
+</html>
